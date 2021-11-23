@@ -1,0 +1,23 @@
+package codes.blitz.game.totem_utils.collisions;
+
+import codes.blitz.game.message.TotemAnswer;
+
+import java.util.List;
+
+public class TotemCollisionChecker {
+
+    public static void checkForCollisions(List<TotemAnswer> totemAnswers) {
+        for(int i = 0; i < totemAnswers.size(); i++) {
+            for(int j = i+1; j < totemAnswers.size(); j++) {
+                final int finalJ = j;
+                totemAnswers.get(i).coordinates().forEach(coordinatePairI -> {
+                    totemAnswers.get(finalJ).coordinates().forEach(coordinatePairJ -> {
+                        if(coordinatePairI.x() == coordinatePairJ.x() && coordinatePairI.y() == coordinatePairJ.y()) {
+                            throw new RuntimeException("totem collision");
+                        }
+                    });
+                });
+            }
+        }
+    }
+}

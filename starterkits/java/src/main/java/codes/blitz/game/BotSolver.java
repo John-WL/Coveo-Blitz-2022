@@ -1,5 +1,8 @@
 package codes.blitz.game;
 
+import codes.blitz.game.message.TotemAnswer;
+import codes.blitz.game.solvers.LinearSystemSolver;
+import codes.blitz.game.solvers.MixedSolverV1;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
@@ -8,11 +11,13 @@ import codes.blitz.game.message.GameMessage;
 import codes.blitz.game.message.Question;
 import codes.blitz.game.serialization.JsonMapperSingleton;
 
+import java.util.List;
 
-public class Solver {
+
+public class BotSolver {
     private final JsonMapper jsonMapper = JsonMapperSingleton.getInstance();
 
-    public Solver() {
+    public BotSolver() {
     }
 
     public Answer getAnswer(final GameMessage gameMessage) throws JsonProcessingException {
@@ -20,7 +25,8 @@ public class Solver {
         System.out.println("Received Question: " + jsonMapper.writeValueAsString(question));
 
         final var totemsToPlace = question.totems();
-        final var placedTotems = BasicStackerSolver.solve(totemsToPlace);
+        List<TotemAnswer> placedTotems;
+        placedTotems = new LinearSystemSolver().solve(totemsToPlace);
         final Answer answer = new Answer(placedTotems);
 
         System.out.println("Sending Answer: " + jsonMapper.writeValueAsString(answer));

@@ -6,11 +6,11 @@ import codes.blitz.game.client.WebsocketGameClient;
 public class Application {
   @SuppressWarnings("resource")
   public static void main(String[] args) throws Exception {
-    Solver solver = new Solver();
+    BotSolver botSolver = new BotSolver();
     if (System.getenv("TOKEN") != null) {
-      new WebsocketGameClient(solver).run();
+      new WebsocketGameClient(botSolver).run();
     } else {
-      new LocalGameClient(solver).run();
+      new LocalGameClient(botSolver).run();
     }
   }
 }

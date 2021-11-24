@@ -7,7 +7,7 @@ import java.util.concurrent.CountDownLatch;
 
 import org.glassfish.tyrus.client.ClientManager;
 
-import codes.blitz.game.Solver;
+import codes.blitz.game.BotSolver;
 import codes.blitz.game.message.GameMessage;
 import codes.blitz.game.serialization.MessageDecoder;
 import codes.blitz.game.serialization.MessageEncoder;
@@ -22,11 +22,11 @@ import jakarta.websocket.Session;
 
 @ClientEndpoint(decoders = MessageDecoder.class, encoders = MessageEncoder.class)
 public class WebsocketGameClient {
-  private final Solver solver;
+  private final BotSolver botSolver;
   private final CountDownLatch latch;
 
-  public WebsocketGameClient(Solver solver) {
-    this.solver = solver;
+  public WebsocketGameClient(BotSolver botSolver) {
+    this.botSolver = botSolver;
     this.latch = new CountDownLatch(1);
   }
 
@@ -54,7 +54,7 @@ public class WebsocketGameClient {
                                        Session session) throws IOException, EncodeException {
     var nextMove = Map.of("type", "COMMAND",
         "tick", receivedMessage.tick(),
-        "actions", solver.getAnswer(receivedMessage));
+        "actions", botSolver.getAnswer(receivedMessage));
 
     session.getBasicRemote().sendObject(nextMove);
 

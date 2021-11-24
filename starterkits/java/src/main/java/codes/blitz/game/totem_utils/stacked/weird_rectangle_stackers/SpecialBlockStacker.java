@@ -1,4 +1,4 @@
-package codes.blitz.game.totem_utils.stacked.stackers;
+package codes.blitz.game.totem_utils.stacked.weird_rectangle_stackers;
 
 import codes.blitz.game.message.CoordinatePair;
 import codes.blitz.game.message.Totem;
@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface SpecialBlockStacker {
+
     Totem getType();
     CoordinatePair getEdgeStackOverhead();
     void build4SquaresBlockAt(List<TotemAnswer> totems, int xOffset, int yOffset, int amountToBuild);
@@ -63,6 +64,19 @@ public interface SpecialBlockStacker {
         // place the final remaining blocks
         stacker.build4SquaresBlockAt(totems, squareSizeOutOfSpecial4Squares, remainingAmount/4, (remainingAmount%4));
 
-        return new StackedTotem(totems, stacker.getType(), size);
+        return new StackedTotem(totems, stacker.getType(), size, iteratorSizeToCompleteSquareFirst);
+    }
+
+    static List<StackedTotem> generateSpecial4By4BlockList(int amount, SpecialBlockStacker stacker) {
+        final List<StackedTotem> stackedTotems = new ArrayList<>();
+
+        for(int i = 0; i < amount; i++) {
+            final List<TotemAnswer> totems = new ArrayList<>();
+            stacker.build4SquaresBlockAt(totems, 0, 0, 4);
+            final StackedTotem special4By4Square = new StackedTotem(totems, stacker.getType(), new CoordinatePair(4, 4), 1);
+            stackedTotems.add(special4By4Square);
+        }
+
+        return stackedTotems;
     }
 }

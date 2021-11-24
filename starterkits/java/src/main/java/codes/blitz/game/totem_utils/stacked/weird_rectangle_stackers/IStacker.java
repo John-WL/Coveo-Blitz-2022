@@ -1,4 +1,4 @@
-package codes.blitz.game.totem_utils.stacked.stackers;
+package codes.blitz.game.totem_utils.stacked.weird_rectangle_stackers;
 
 import codes.blitz.game.message.CoordinatePair;
 import codes.blitz.game.message.Totem;

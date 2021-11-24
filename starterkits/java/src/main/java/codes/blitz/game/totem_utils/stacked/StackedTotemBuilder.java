@@ -1,7 +1,7 @@
 package codes.blitz.game.totem_utils.stacked;
 
 import codes.blitz.game.message.Totem;
-import codes.blitz.game.totem_utils.stacked.stackers.*;
+import codes.blitz.game.totem_utils.stacked.weird_rectangle_stackers.*;
 
 public record StackedTotemBuilder(Totem totem) {
 

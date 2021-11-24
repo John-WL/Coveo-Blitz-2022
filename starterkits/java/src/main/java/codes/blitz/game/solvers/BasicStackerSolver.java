@@ -1,4 +1,4 @@
-package codes.blitz.game;
+package codes.blitz.game.solvers;
 
 import codes.blitz.game.message.Totem;
 import codes.blitz.game.message.TotemAnswer;
@@ -10,9 +10,9 @@ import codes.blitz.game.totem_utils.stacked.stack_mergers.BasicArrayMerger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BasicStackerSolver {
+public class BasicStackerSolver implements CoveoSolver {
 
-    public static List<TotemAnswer> solve(List<TotemQuestion> totemsToPlace) {
+    public List<TotemAnswer> solve(List<TotemQuestion> totemsToPlace) {
         final int amountOfL = (int) totemsToPlace.stream().filter(totemQuestion -> totemQuestion.shape().equals(Totem.L)).count();
         final int amountOfJ = (int) totemsToPlace.stream().filter(totemQuestion -> totemQuestion.shape().equals(Totem.J)).count();
         final int amountOfI = (int) totemsToPlace.stream().filter(totemQuestion -> totemQuestion.shape().equals(Totem.I)).count();

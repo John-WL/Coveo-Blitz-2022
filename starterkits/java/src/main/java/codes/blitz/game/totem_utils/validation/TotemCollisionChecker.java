@@ -1,4 +1,4 @@
-package codes.blitz.game.totem_utils.collisions;
+package codes.blitz.game.totem_utils.validation;
 
 import codes.blitz.game.message.TotemAnswer;
 
@@ -13,6 +13,8 @@ public class TotemCollisionChecker {
                 totemAnswers.get(i).coordinates().forEach(coordinatePairI -> {
                     totemAnswers.get(finalJ).coordinates().forEach(coordinatePairJ -> {
                         if(coordinatePairI.x() == coordinatePairJ.x() && coordinatePairI.y() == coordinatePairJ.y()) {
+                            System.out.println(coordinatePairJ.x());
+                            System.out.println(coordinatePairJ.y());
                             throw new RuntimeException("totem collision");
                         }
                     });

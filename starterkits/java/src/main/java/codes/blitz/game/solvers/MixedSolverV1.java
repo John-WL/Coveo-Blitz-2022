@@ -13,11 +13,11 @@ public class MixedSolverV1 implements CoveoSolver {
             return new SingleTotemSolver().solve(totemsToPlace);
         }
         if(totemsToPlace.size() == 2) {
-            return new BiTotemSolver().solve(totemsToPlace);
+            //return new BiTotemSolver().solve(totemsToPlace);
         }
         if(totemsToPlace.size() == 4) {
-            return new QuadriTotemSolver().solve(totemsToPlace);
+            //return new QuadriTotemSolver().solve(totemsToPlace);
         }
-        return new BigSquareFirstStackerSolver().solve(totemsToPlace);
+        return new BigSquareFirstStackerSolverV2().solve(totemsToPlace);
     }
 }

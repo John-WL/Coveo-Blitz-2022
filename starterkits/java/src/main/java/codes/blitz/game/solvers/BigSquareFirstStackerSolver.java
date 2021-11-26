@@ -24,13 +24,49 @@ public class BigSquareFirstStackerSolver implements CoveoSolver {
         final int amountOfO = (int) totemsToPlace.stream().filter(totemQuestion -> totemQuestion.shape().equals(Totem.O)).count();
 
 
+        // building remnants, S and Z first
+
+        // remnants
+        final List<StackedTotem> yikesSpecialSquaresRemnants = new ArrayList<>();
+        if(amountOfT%4 != 0) {
+            yikesSpecialSquaresRemnants.add(SpecialBlockStacker.stackBlocks(amountOfT % 4, new TStackerV2()));
+        }
+        if(amountOfL%4 != 0) {
+            yikesSpecialSquaresRemnants.add(SpecialBlockStacker.stackBlocks(amountOfL%4, new LStacker()));
+        }
+        if(amountOfJ%4 != 0) {
+            yikesSpecialSquaresRemnants.add(SpecialBlockStacker.stackBlocks(amountOfJ%4, new JStacker()));
+        }
+        if(amountOfI%4 != 0) {
+            yikesSpecialSquaresRemnants.add(SpecialBlockStacker.stackBlocks(amountOfI%4, new IStacker()));
+        }
+        if(amountOfO%4 != 0) {
+            yikesSpecialSquaresRemnants.add(SpecialBlockStacker.stackBlocks(amountOfO%4, new OStacker()));
+        }
+
+        // S
+        final List<StackedTotem> yikesSpecialSquaresS = new ArrayList<>();
+        yikesSpecialSquaresS.addAll(new Special4By4SquareBuilder(Totem.S).build(amountOfS /4));
+        if(amountOfS%4 != 0) {
+            yikesSpecialSquaresS.add(SpecialBlockStacker.stackBlocks(amountOfS % 4, new SStackerV2()));
+        }
+
+        // Z
+        final List<StackedTotem> yikesSpecialSquaresZ = new ArrayList<>();
+        yikesSpecialSquaresZ.addAll(new Special4By4SquareBuilder(Totem.Z).build(amountOfZ /4));
+        yikesSpecialSquaresZ.forEach(stackedTotem -> stackedTotem.moveBy(new CoordinatePair(1, 0)));
+        if(amountOfZ %4 != 0) {
+            yikesSpecialSquaresZ.add(SpecialBlockStacker.stackBlocks(amountOfZ % 4, new ZStacker()).moveBy(new CoordinatePair(1, 0)));
+        }
+
+
         // building initial malformed base square
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         final List<StackedTotem> stackedTotems = new ArrayList<>();// calculate the size of the big square
-        final int amountOfFullSquares = amountOfL /4 + amountOfJ /4 + amountOfI /4 + amountOfO /4;
+        final int amountOfFullSquares = amountOfL /4 + amountOfJ /4 + amountOfI /4 + amountOfO /4 + amountOfT /4 + yikesSpecialSquaresRemnants.size() + yikesSpecialSquaresS.size() + yikesSpecialSquaresZ.size();
         final int sideLengthOfBiggestPossibleCoolSquare = (int) (Math.sqrt(amountOfFullSquares));
         final int areaOfBiggestPossibleCoolSquare = sideLengthOfBiggestPossibleCoolSquare * sideLengthOfBiggestPossibleCoolSquare;
 
@@ -40,6 +76,10 @@ public class BigSquareFirstStackerSolver implements CoveoSolver {
         special4By4Squares.addAll(new Special4By4SquareBuilder(Totem.J).build(amountOfJ /4));
         special4By4Squares.addAll(new Special4By4SquareBuilder(Totem.I).build(amountOfI /4));
         special4By4Squares.addAll(new Special4By4SquareBuilder(Totem.O).build(amountOfO /4));
+        special4By4Squares.addAll(new Special4By4SquareBuilder(Totem.T).build(amountOfT /4));
+        special4By4Squares.addAll(yikesSpecialSquaresRemnants);
+        special4By4Squares.addAll(yikesSpecialSquaresS);
+        special4By4Squares.addAll(yikesSpecialSquaresZ);
 
         // to know the big square size with the over-heading parts on top and to the right of it
         CoordinatePair malformedBigSquareSize = new CoordinatePair(sideLengthOfBiggestPossibleCoolSquare, sideLengthOfBiggestPossibleCoolSquare);
@@ -65,7 +105,7 @@ public class BigSquareFirstStackerSolver implements CoveoSolver {
             for(int i = 0; i < sideLengthOfBiggestPossibleCoolSquare; i++) {
                 final int xCoordinate = i*4;
                 final int yCoordinate = sideLengthOfBiggestPossibleCoolSquare*4;
-                special4By4Squares.get(i+areaOfBiggestPossibleCoolSquare)
+                special4By4Squares.get(i + areaOfBiggestPossibleCoolSquare)
                         .moveBy(new CoordinatePair(xCoordinate, yCoordinate));
                 amountOfRemainingSpecialSquares--;
             }
@@ -93,42 +133,6 @@ public class BigSquareFirstStackerSolver implements CoveoSolver {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-        // now it's time to handle that crappy TSZ stuff
-        // T
-        final List<StackedTotem> yikesSpecialSquaresT = new ArrayList<>();
-        yikesSpecialSquaresT.addAll(new Special4By4SquareBuilder(Totem.T).build(amountOfT /4));
-
-        // S
-        final List<StackedTotem> yikesSpecialSquaresS = new ArrayList<>();
-        yikesSpecialSquaresS.addAll(new Special4By4SquareBuilder(Totem.S).build(amountOfS /4));
-        if(amountOfT%4 != 0) {
-            yikesSpecialSquaresS.add(SpecialBlockStacker.stackBlocks(amountOfT % 4, new TStacker()));
-        }
-        if(amountOfS%4 != 0) {
-            yikesSpecialSquaresS.add(SpecialBlockStacker.stackBlocks(amountOfS % 4, new SStacker()));
-        }
-        yikesSpecialSquaresS.add(SpecialBlockStacker.stackBlocks(0, new SStacker()));
-        if(amountOfL%4 != 0) {
-            yikesSpecialSquaresS.add(SpecialBlockStacker.stackBlocks(amountOfL%4, new LStacker()));
-        }
-        if(amountOfJ%4 != 0) {
-            yikesSpecialSquaresS.add(SpecialBlockStacker.stackBlocks(amountOfJ%4, new JStacker()));
-        }
-        if(amountOfI%4 != 0) {
-            yikesSpecialSquaresS.add(SpecialBlockStacker.stackBlocks(amountOfI%4, new IStacker()));
-        }
-        if(amountOfO%4 != 0) {
-            yikesSpecialSquaresS.add(SpecialBlockStacker.stackBlocks(amountOfO%4, new OStacker()));
-        }
-
-        // Z
-        final List<StackedTotem> yikesSpecialSquaresZ = new ArrayList<>();
-        yikesSpecialSquaresZ.addAll(new Special4By4SquareBuilder(Totem.Z).build(amountOfZ /4));
-        if(amountOfZ %4 != 0) {
-            yikesSpecialSquaresZ.add(SpecialBlockStacker.stackBlocks(amountOfZ % 4, new ZStacker()));
-        }
-
         // avoiding a plane crash
         if(malformedBigSquareSize.x() == 0) {
             malformedBigSquareSize = new CoordinatePair(1, malformedBigSquareSize.y());
@@ -140,7 +144,7 @@ public class BigSquareFirstStackerSolver implements CoveoSolver {
         // finding the right proportion to split T
         int s = yikesSpecialSquaresS.size();
         int z = yikesSpecialSquaresZ.size();
-        int t = yikesSpecialSquaresT.size();
+        /*int t = yikesSpecialSquaresT.size();
         int amountOfTToPutInS = (int)(Math.min(Math.max(((s-z-t)/(-2.0*t)), 0), 1)*t);
         int amountOfTToPutInZ = t - amountOfTToPutInS;
         amountOfTToPutInS += ((z % malformedBigSquareSize.y()) + amountOfTToPutInZ) % malformedBigSquareSize.y();
@@ -151,15 +155,16 @@ public class BigSquareFirstStackerSolver implements CoveoSolver {
         List<StackedTotem> tForZ = yikesSpecialSquaresT.subList(amountOfTToPutInS, yikesSpecialSquaresT.size());
         tForZ.forEach(StackedTotem::inversePattern);
         yikesSpecialSquaresS.addAll(tForS);
-        yikesSpecialSquaresZ.addAll(tForZ);
+        yikesSpecialSquaresZ.addAll(tForZ);*/
 
         int newBigHeight = 0;
         int newBigWidth = 4;
 
+        /*
         // and then doing Z
         for(int i = 0; i < yikesSpecialSquaresZ.size(); i++) {
             final int yCoordinate = (i % (malformedBigSquareSize.y())) * 4;
-            final int xCoordinate = malformedBigSquareSize.x() * 4 + (i / ((malformedBigSquareSize.y()))) * 4;
+            final int xCoordinate = malformedBigSquareSize.x() * 4 + (i / (malformedBigSquareSize.y())) * 4;
             yikesSpecialSquaresZ.get(i).moveBy(new CoordinatePair(xCoordinate, yCoordinate));
             if (newBigHeight < yCoordinate) {
                 newBigHeight = yCoordinate;
@@ -187,7 +192,7 @@ public class BigSquareFirstStackerSolver implements CoveoSolver {
                     newBigHeight = yCoordinate;
                 }
             }
-        }
+        }*/
 
         /*
         // then doing T
@@ -201,8 +206,8 @@ public class BigSquareFirstStackerSolver implements CoveoSolver {
         }*/
 
         // updating TSZ
-        stackedTotems.addAll(yikesSpecialSquaresS);
-        stackedTotems.addAll(yikesSpecialSquaresZ);
+        //stackedTotems.addAll(yikesSpecialSquaresS);
+        //stackedTotems.addAll(yikesSpecialSquaresZ);
         //stackedTotems.addAll(yikesSpecialSquaresT);
 
         // DON'T FORGET TO HANDLE THE REMAINING ghjkaghafdklghalk BLOCKS THAT ARE SPECIAL SNOW FLAKES

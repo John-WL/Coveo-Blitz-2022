@@ -42,11 +42,11 @@ public record Special4By4SquareBuilder(Totem totem) {
     }
 
     private List<StackedTotem> buildT(int amount) {
-        return SpecialBlockStacker.generateSpecial4By4BlockList(amount, new TStacker());
+        return SpecialBlockStacker.generateSpecial4By4BlockList(amount, new TStackerV2());
     }
 
     private List<StackedTotem> buildS(int amount) {
-        return SpecialBlockStacker.generateSpecial4By4BlockList(amount, new SStacker());
+        return SpecialBlockStacker.generateSpecial4By4BlockList(amount, new SStackerV2());
     }
 
     private List<StackedTotem> buildZ(int amount) {

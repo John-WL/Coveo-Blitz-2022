@@ -14,6 +14,12 @@ public interface SpecialBlockStacker {
     CoordinatePair getEdgeStackOverhead();
     void build4SquaresBlockAt(List<TotemAnswer> totems, int xOffset, int yOffset, int amountToBuild);
 
+    static void addWeirdBlock(List<StackedTotem> listToAddTo, SpecialBlockStacker block) {
+        final List<TotemAnswer> totemAnswers = new ArrayList<>();
+        block.build4SquaresBlockAt(totemAnswers, 0, 0, 1);
+        listToAddTo.add(new StackedTotem(totemAnswers, block.getEdgeStackOverhead()));
+    }
+
     static StackedTotem stackBlocks(int amount, SpecialBlockStacker stacker) {
         final List<TotemAnswer> totems = new ArrayList<>(amount);
         final int amountOfSpecial4Squares = amount/4;

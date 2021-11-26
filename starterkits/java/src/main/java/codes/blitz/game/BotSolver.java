@@ -1,6 +1,8 @@
 package codes.blitz.game;
 
 import codes.blitz.game.message.TotemAnswer;
+import codes.blitz.game.solvers.BasicStackerSolver;
+import codes.blitz.game.solvers.BigSquareFirstStackerSolverV2;
 import codes.blitz.game.solvers.LinearSystemSolver;
 import codes.blitz.game.solvers.MixedSolverV1;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,8 +28,12 @@ public class BotSolver {
 
         final var totemsToPlace = question.totems();
         List<TotemAnswer> placedTotems;
-        placedTotems = new LinearSystemSolver().solve(totemsToPlace);
+        placedTotems = new MixedSolverV1().solve(totemsToPlace);
         final Answer answer = new Answer(placedTotems);
+
+        totemsToPlace.forEach(totemQuestion -> {
+            System.out.println("new TotemQuestion(Totem." + totemQuestion.shape() + "),");
+        });
 
         System.out.println("Sending Answer: " + jsonMapper.writeValueAsString(answer));
         return answer;

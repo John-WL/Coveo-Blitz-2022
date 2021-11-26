@@ -39,7 +39,7 @@ public class LinearSystemSolver implements CoveoSolver {
                 .toArray(int[][]::new);
 
         // solve the set of linear equations for whole integers only
-        final int[] x = diophantineLinearSolve(c, b);
+        final int[] x = diophantineLinearSolveV1(c, b);
 
         // generate the found blocks
         final List<SpecialBlock> specialBlocks = new ArrayList<>();
@@ -115,14 +115,26 @@ public class LinearSystemSolver implements CoveoSolver {
         return totemAnswers;
     }
 
-    private int[] diophantineLinearSolve(int[][] c, int[] b) {
+    private int[] diophantineLinearSolveV1(int[][] c, int[] b) {
         int[] x = new int[c.length];
-
         while(!solved(c, x, b)) {
             incrementNext(c, x, b, 0);
+            if(isZero(x)) {
+                break;
+            }
         }
-
         return x;
+    }
+
+    private boolean isZero(int[] x) {
+        boolean isZero = true;
+        for (int xn : x) {
+            if (xn != 0) {
+                isZero = false;
+                break;
+            }
+        }
+        return isZero;
     }
 
     private void incrementNext(int[][] c, int[] x, int[] b, int i) {

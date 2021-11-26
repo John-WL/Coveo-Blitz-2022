@@ -42,6 +42,7 @@ public class StackedTotem {
         if(type == Totem.Z || type == Totem.S || type == Totem.L || type == Totem.J) {
             throw new RuntimeException("flipping non-invertible totems is prohibited");
         }
+        size = size.inverse();
         totemList.forEach(totemAnswer ->
                 totemList.set(totemList.indexOf(totemAnswer),
                         new TotemAnswer(totemAnswer.shape(),
@@ -50,13 +51,26 @@ public class StackedTotem {
                                         .collect(Collectors.toList()))));
     }
 
-    public void awkwardRotatePattern90DegreesCW() {
+    public StackedTotem awkwardRotatePattern90DegreesCW() {
         totemList.forEach(totemAnswer ->
                 totemList.set(totemList.indexOf(totemAnswer),
                         new TotemAnswer(totemAnswer.shape(),
                                 totemAnswer.coordinates().stream()
-                                        .map(position -> new CoordinatePair(position.y(), 4-position.x()))
+                                        .map(position -> new CoordinatePair(position.y(), size.y()-1-position.x()))
                                         .collect(Collectors.toList()))));
+        size = size.inverse();
+        return this;
+    }
+
+    public StackedTotem awkwardRotatePattern90DegreesCCW() {
+        totemList.forEach(totemAnswer ->
+                totemList.set(totemList.indexOf(totemAnswer),
+                        new TotemAnswer(totemAnswer.shape(),
+                                totemAnswer.coordinates().stream()
+                                        .map(position -> new CoordinatePair(size.x()-1-position.y(), position.x()))
+                                        .collect(Collectors.toList()))));
+        size = size.inverse();
+        return this;
     }
 
     public List<TotemAnswer> totemList() {

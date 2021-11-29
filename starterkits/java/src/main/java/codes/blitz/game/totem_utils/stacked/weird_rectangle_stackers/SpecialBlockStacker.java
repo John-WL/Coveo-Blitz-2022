@@ -4,6 +4,7 @@ import codes.blitz.game.message.CoordinatePair;
 import codes.blitz.game.message.Totem;
 import codes.blitz.game.message.TotemAnswer;
 import codes.blitz.game.totem_utils.stacked.StackedTotem;
+import codes.blitz.game.totem_utils.stacked.weird_rectangle_stackers.mixed.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,32 @@ public interface SpecialBlockStacker {
         final List<TotemAnswer> totemAnswers = new ArrayList<>();
         block.build4SquaresBlockAt(totemAnswers, 0, 0, 1);
         listToAddTo.add(new StackedTotem(totemAnswers, block.getEdgeStackOverhead()));
+    }
+
+    static StackedTotem getWeirdBlock(SpecialBlockStacker block) {
+        final List<TotemAnswer> totemAnswers = new ArrayList<>();
+        block.build4SquaresBlockAt(totemAnswers, 0, 0, 1);
+        return new StackedTotem(totemAnswers, block.getEdgeStackOverhead());
+    }
+
+    static List<StackedTotem> generateEveryAvailableWeirdBlocks() {
+        final List<StackedTotem> stackedTotems = new ArrayList<>();
+        addWeirdBlock(stackedTotems, new J2I2Stacker());
+        addWeirdBlock(stackedTotems, new JOLIStacker());
+        addWeirdBlock(stackedTotems, new L2I2Stacker());
+        addWeirdBlock(stackedTotems, new L2J2Stacker());
+        addWeirdBlock(stackedTotems, new O2I2Stacker());
+        addWeirdBlock(stackedTotems, new O2J2Stacker());
+        addWeirdBlock(stackedTotems, new O2L2Stacker());
+        addWeirdBlock(stackedTotems, new S2J2Stacker());
+        addWeirdBlock(stackedTotems, new SL2IStacker());
+        addWeirdBlock(stackedTotems, new ST2JStacker());
+        addWeirdBlock(stackedTotems, new T2JIStacker());
+        addWeirdBlock(stackedTotems, new T2LIStacker());
+        addWeirdBlock(stackedTotems, new Z2L2Stacker());
+        addWeirdBlock(stackedTotems, new ZJ2IStacker());
+        addWeirdBlock(stackedTotems, new ZT2LStacker());
+        return stackedTotems;
     }
 
     static StackedTotem stackBlocks(int amount, SpecialBlockStacker stacker) {

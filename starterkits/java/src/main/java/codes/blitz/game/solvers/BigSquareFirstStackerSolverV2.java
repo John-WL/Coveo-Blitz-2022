@@ -11,9 +11,9 @@ import codes.blitz.game.totem_utils.stacked.big_square_stackers.Special4By4Squar
 import codes.blitz.game.totem_utils.stacked.weird_rectangle_stackers.*;
 import codes.blitz.game.totem_utils.stacked.weird_rectangle_stackers.mixed.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class BigSquareFirstStackerSolverV2 implements CoveoSolver {
 
@@ -34,6 +34,9 @@ public class BigSquareFirstStackerSolverV2 implements CoveoSolver {
             playFieldWidth -= 4;
         }
         else if(totemsToPlace.size() == 64) {
+            playFieldWidth -= 4;
+        }
+        else if(totemsToPlace.size() == 32) {
             playFieldWidth -= 4;
         }
         else if(totemsToPlace.size() == 16) {
@@ -177,6 +180,65 @@ public class BigSquareFirstStackerSolverV2 implements CoveoSolver {
             amountOfJ -= 2;
         }
 
+
+
+        // NOW, WE TRY TO MATCH INCOMPLETE BLOCKS, IF THERE ARE ANY
+        // only do this for smaller problems.
+        if(totemsToPlace.size() <= 16) {
+            Optional<StackedTotem> bestBlockToPlaceOpt = Optional.empty();
+            do {
+                if (bestBlockToPlaceOpt.isPresent()) {
+                    final StackedTotem bestBlockToPlace = bestBlockToPlaceOpt.get();
+
+                    // WE FINALLY ADD IT OMG FJUFHJWKHGWLIGHWEIULG
+                    fullSquares.add(bestBlockToPlace);
+
+                    // updating variables for remnants...
+                    final List<Totem> typesPlaced = bestBlockToPlace.totemList().stream()
+                            .map(TotemAnswer::shape)
+                            .collect(Collectors.toList());
+                    for (int i = 0; i < typesPlaced.size(); i++) {
+                        Totem type = typesPlaced.get(i);
+                        switch (type) {
+                            case L -> amountOfL--;
+                            case J -> amountOfJ--;
+                            case I -> amountOfI--;
+                            case T -> amountOfT--;
+                            case O -> amountOfO--;
+                            case S -> amountOfS--;
+                            case Z -> amountOfZ--;
+                        }
+                    }
+                }
+                final List<Totem> totemShapesThatRemain = new ArrayList<>();
+                for (int i = 0; i < amountOfL % 4; i++) {
+                    totemShapesThatRemain.add(Totem.L);
+                }
+                for (int i = 0; i < amountOfJ % 4; i++) {
+                    totemShapesThatRemain.add(Totem.J);
+                }
+                for (int i = 0; i < amountOfI % 4; i++) {
+                    totemShapesThatRemain.add(Totem.I);
+                }
+                for (int i = 0; i < amountOfT % 4; i++) {
+                    totemShapesThatRemain.add(Totem.T);
+                }
+                for (int i = 0; i < amountOfO % 4; i++) {
+                    totemShapesThatRemain.add(Totem.O);
+                }
+                for (int i = 0; i < amountOfS % 4; i++) {
+                    totemShapesThatRemain.add(Totem.S);
+                }
+                for (int i = 0; i < amountOfZ % 4; i++) {
+                    totemShapesThatRemain.add(Totem.Z);
+                }
+                bestBlockToPlaceOpt = findBestSuitedBlockToFillInRemnants(totemShapesThatRemain);
+            } while (bestBlockToPlaceOpt.isPresent());
+        }
+
+
+        // NOW, WE CAN PLACE EVERYTHING THAT'S CONTAINED IN THE "fullSquares" LIST, AND WE'LL BE DONE
+
         fullSquares.addAll(new Special4By4SquareBuilder(Totem.L).build(amountOfL /4));
         fullSquares.addAll(new Special4By4SquareBuilder(Totem.J).build(amountOfJ /4));
         fullSquares.addAll(new Special4By4SquareBuilder(Totem.I).build(amountOfI /4));
@@ -278,5 +340,55 @@ public class BigSquareFirstStackerSolverV2 implements CoveoSolver {
         System.out.println(totemsToPlace.size());
         System.out.println(totemAnswers.size());
         return totemAnswers;
+    }
+
+    private Optional<StackedTotem> findBestSuitedBlockToFillInRemnants(List<Totem> totemShapesThatRemain) {
+
+        final Set<Totem> distinctShapes = new HashSet<>(totemShapesThatRemain);
+
+        // this method is hand-crafted and executes in O(1), there's no way we are solving that on the fly here lol
+        final List<StackedTotem> allWeirdBlocks = SpecialBlockStacker.generateEveryAvailableWeirdBlocks();
+
+        // only keep the blocks that contain at least one occurrence of the shape we need
+        final List<StackedTotem> concernedBlocksWithEmptyOnes = new ArrayList<>();
+        allWeirdBlocks.forEach(stackedTotem -> {
+            concernedBlocksWithEmptyOnes.add(
+                    new StackedTotem(stackedTotem.totemList().stream()
+                            .filter(totemAnswer -> totemShapesThatRemain.contains(totemAnswer.shape()))
+                            .collect(Collectors.toList()), new CoordinatePair(4, 4)));
+        });
+        List<StackedTotem> concernedBlocks = concernedBlocksWithEmptyOnes.stream()
+                .filter(stackedTotem -> stackedTotem.totemList().size() > 0)
+                .collect(Collectors.toList());
+
+        for(int i = 0; i < concernedBlocks.size(); i++) {
+            for(Totem totem: distinctShapes) {
+                int amountOfSpecificShapeInBlock = (int) concernedBlocks.get(i).totemList().stream().filter(totemAnswer -> totemAnswer.shape().equals(totem)).count();
+                int amountOfSpecificShapeToAdd = (int) totemShapesThatRemain.stream().filter(shape -> shape.equals(totem)).count();
+                while(amountOfSpecificShapeInBlock > amountOfSpecificShapeToAdd) {
+                    amountOfSpecificShapeInBlock = (int) concernedBlocks.get(i).totemList().stream().filter(totemAnswer -> totemAnswer.shape().equals(totem)).count();
+                    amountOfSpecificShapeToAdd = (int) totemShapesThatRemain.stream().filter(shape -> shape.equals(totem)).count();
+                    for(int j = 0; j < concernedBlocks.get(i).totemList().size(); j++) {
+                        if(concernedBlocks.get(i).totemList().get(j).shape().equals(totem)) {
+                            concernedBlocks.get(i).totemList().remove(j);
+                            j = concernedBlocks.get(i).totemList().size(); // break;
+                        }
+                    }
+                }
+            }
+        }
+        concernedBlocks = concernedBlocks.stream()
+                .filter(stackedTotem -> stackedTotem.totemList().size() > 0)
+                .collect(Collectors.toList());
+
+        final List<StackedTotem> sortedConcernedBlocks = concernedBlocks.stream()
+                .sorted(Comparator.comparingInt(stackedTotem -> stackedTotem.totemList().size()))
+                .collect(Collectors.toList());
+
+        if(sortedConcernedBlocks.size() > 0) {
+            return Optional.of(sortedConcernedBlocks.get(sortedConcernedBlocks.size() - 1));
+        }
+
+        return Optional.empty();
     }
 }

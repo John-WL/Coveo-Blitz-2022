@@ -22,7 +22,7 @@ public class LocalGameClient {
   public void run() throws JsonProcessingException {
     System.out.println("[Running in local mode]");
     var question = new GameMessage(1, new Question(List.of(
-            new TotemQuestion(Totem.I),
+            /*new TotemQuestion(Totem.I),
             new TotemQuestion(Totem.L),
             new TotemQuestion(Totem.T),
             new TotemQuestion(Totem.Z),
@@ -277,7 +277,10 @@ public class LocalGameClient {
             new TotemQuestion(Totem.L),
             new TotemQuestion(Totem.L),
             new TotemQuestion(Totem.L),
-            new TotemQuestion(Totem.T)
+            new TotemQuestion(Totem.T)*/
+            new TotemQuestion(Totem.T),
+            new TotemQuestion(Totem.I)
+
     )));
     var answer = botSolver.getAnswer(question);
     TotemCollisionChecker.checkForCollisions(answer.totems());
